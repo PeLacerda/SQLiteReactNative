@@ -1,9 +1,9 @@
 import Estilos from './styles/Estilos.js';
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, Alert } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, Alert } from 'react-native';        // FlatList cria uma tabela em lista
 import { initDB, adicionarPessoa, listarPessoas, deletarPessoa } from './database';
 import PessoaItem from './components/PessoaItem';
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';      // Nova forma de usar o safeareaview
 
 export default function App() {
   const [nome, setNome] = useState('');
@@ -14,14 +14,15 @@ export default function App() {
     const lista = await listarPessoas();
     setPessoas(lista);
   };
-  
+
   const prepararApp = async () => {
-    await initDB();
-    await carregarPessoas();
+    await initDB();      // Chama o initdb (executa a tabela)
+    await carregarPessoas();      // Carrega as pessoas
   };
 
+  // Verifica se o campo está vazio ou não
   async function handleAdicionar() {
-    if (!nome.trim() || !email.trim()) {
+    if (!nome.trim() || !email.trim()) {        // Verifica espaço vazio no inicio e final e elimina
       Alert.alert('Erro', 'Preencha todos os campos');
       return;
     }
@@ -36,6 +37,7 @@ export default function App() {
     await carregarPessoas();
   };
 
+  // Se não tem estado no array, não será chamado, ele será chamado apenas no inicio
   useEffect(() => {
     prepararApp();
   }, []);
@@ -51,7 +53,6 @@ export default function App() {
           <TextInput
             placeholder="Nome"
             value={nome}
-            onChangeText={setNome}
             style={Estilos.campoTexto}
           />
           <TextInput
@@ -65,12 +66,16 @@ export default function App() {
         </View>
 
         <FlatList
-          data={pessoas}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <PessoaItem id={item.id} nome={item.nome} email={item.email} onDelete={handleDeletar} />
+          data={pessoas}      // Atribuição de dados à lista
+          keyExtractor={(item) => item.id.toString()}     // Vincula chave, um id para cada item
+          renderItem={({ item }) => (     // Rederiza os itens da lista e executa o que está em baixo a cada atualização
+            <PessoaItem id={item.id}
+                                nome={item.nome}
+                                email={item.email}
+                                onDelete={handleDeletar} />
           )}
         />
+
       </SafeAreaView>
     </SafeAreaProvider>
   );
