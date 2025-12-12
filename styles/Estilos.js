@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-    pessoaItemContainer: {
+    tenisItemContainer: {
       backgroundColor: '#f2f2f2',
       padding: 12,
       borderRadius: 8,
@@ -10,9 +10,10 @@ export default StyleSheet.create({
       justifyContent: 'space-between',
       alignItems: 'center'
     },
-    pessoaItemNome: { fontSize: 16, fontWeight: 'bold' },
-    pessoaItemEmail: { color: '#555' },
-    pessoaItemBtnExcluirText: { color: 'red', fontWeight: 'bold' },
+    tenisItemNome: { fontSize: 16, fontWeight: 'bold' },
+    tenisItemPreco: { fontSize: 18, color: '#2ecc71', fontWeight: 'bold', marginTop: 4 },
+    tenisItemTamanho: { color: '#555', marginTop: 4 },
+    tenisItemBtnExcluirText: { color: 'red', fontWeight: 'bold' },
     safeAreaViewContainer: { flex: 1, backgroundColor: '#fff', padding: 20 },
     textoTitulo: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
     camposCadastroContainer: { marginBottom: 20 },

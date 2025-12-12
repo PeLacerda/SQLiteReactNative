@@ -1,40 +1,56 @@
 import Estilos from './styles/Estilos.js';
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, FlatList, Alert } from 'react-native';        // FlatList cria uma tabela em lista
-import { initDB, adicionarPessoa, listarPessoas, deletarPessoa } from './database';
-import PessoaItem from './components/PessoaItem';
+import { initDB, adicionarTenis, listarTenis, deletarTenis } from './database';
+import TenisItem from './components/TenisItem';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';      // Nova forma de usar o safeareaview
 
 export default function App() {
   const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [pessoas, setPessoas] = useState([]);
+  const [preco, setPreco] = useState('');
+  const [tamanho, setTamanho] = useState('');
+  const [tenis, setTenis] = useState([]);
 
-  async function carregarPessoas() {
-    const lista = await listarPessoas();
-    setPessoas(lista);
+  async function carregarTenis() {
+    const lista = await listarTenis();
+    setTenis(lista);
   };
 
   const prepararApp = async () => {
     await initDB();      // Chama o initdb (executa a tabela)
-    await carregarPessoas();      // Carrega as pessoas
+    await carregarTenis();      // Carrega os tênis
   };
 
   // Verifica se o campo está vazio ou não
   async function handleAdicionar() {
-    if (!nome.trim() || !email.trim()) {        // Verifica espaço vazio no inicio e final e elimina
+    if (!nome.trim() || !preco.trim() || !tamanho.trim()) {        // Verifica espaço vazio no inicio e final e elimina
       Alert.alert('Erro', 'Preencha todos os campos');
       return;
     }
-    await adicionarPessoa(nome, email);
+    
+    const precoNum = parseFloat(preco);
+    const tamanhoNum = parseInt(tamanho);
+    
+    if (isNaN(precoNum) || precoNum <= 0) {
+      Alert.alert('Erro', 'Preço inválido');
+      return;
+    }
+    
+    if (isNaN(tamanhoNum) || tamanhoNum <= 0) {
+      Alert.alert('Erro', 'Tamanho inválido');
+      return;
+    }
+    
+    await adicionarTenis(nome, precoNum, tamanhoNum);
     setNome('');
-    setEmail('');
-    await carregarPessoas();
+    setPreco('');
+    setTamanho('');
+    await carregarTenis();
   };
 
   async function handleDeletar(id) {
-    await deletarPessoa(id);
-    await carregarPessoas();
+    await deletarTenis(id);
+    await carregarTenis();
   };
 
   // Se não tem estado no array, não será chamado, ele será chamado apenas no inicio
@@ -46,32 +62,41 @@ export default function App() {
     <SafeAreaProvider>
       <SafeAreaView style={Estilos.safeAreaViewContainer}>
         <Text style={Estilos.textoTitulo}>
-          Cadastro de Pessoas (SQLite)
+          Loja de Tênis
         </Text>
 
         <View style={Estilos.camposCadastroContainer}>
           <TextInput
-            placeholder="Nome"
+            placeholder="Nome do tênis"
             value={nome}
+            onChangeText={setNome}
             style={Estilos.campoTexto}
           />
           <TextInput
-            placeholder="E-mail"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
+            placeholder="Preço (ex: 299.90)"
+            value={preco}
+            onChangeText={setPreco}
+            keyboardType="decimal-pad"
             style={Estilos.campoTexto}
           />
-          <Button title="Adicionar" onPress={handleAdicionar} />
+          <TextInput
+            placeholder="Tamanho (ex: 42)"
+            value={tamanho}
+            onChangeText={setTamanho}
+            keyboardType="numeric"
+            style={Estilos.campoTexto}
+          />
+          <Button title="Adicionar Tênis" onPress={handleAdicionar} />
         </View>
 
         <FlatList
-          data={pessoas}      // Atribuição de dados à lista
+          data={tenis}      // Atribuição de dados à lista
           keyExtractor={(item) => item.id.toString()}     // Vincula chave, um id para cada item
           renderItem={({ item }) => (     // Rederiza os itens da lista e executa o que está em baixo a cada atualização
-            <PessoaItem id={item.id}
+            <TenisItem id={item.id}
                                 nome={item.nome}
-                                email={item.email}
+                                preco={item.preco}
+                                tamanho={item.tamanho}
                                 onDelete={handleDeletar} />
           )}
         />
